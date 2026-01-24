@@ -33,4 +33,5 @@ def home():
     return "Time-Aware Resume Backend Running"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
+
