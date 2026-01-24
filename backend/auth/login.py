@@ -11,8 +11,8 @@ def login_user(username):
         }
 
     token = create_access_token(
-        identity={
-            "user_id": user["user_id"],
+        identity=str(user["user_id"]),   # ✅ MUST be string
+        additional_claims={              # ✅ extra data goes here
             "role": user["role"],
             "username": user["username"]
         }
