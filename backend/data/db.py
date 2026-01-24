@@ -2,9 +2,10 @@ import os
 from pymongo import MongoClient
 from urllib.parse import quote_plus
 
-USERNAME = os.getenv("revanth")
-PASSWORD = os.getenv("revanth12@")
-HOST = os.getenv("cluster0.y5ewexh.mongodb.net")
+# ✅ CORRECT: Use the environment variable NAMES (keys), not values
+USERNAME = os.getenv("MONGO_USERNAME")
+PASSWORD = os.getenv("MONGO_PASSWORD")
+HOST = os.getenv("MONGO_HOST")
 
 # 🔴 HARD FAIL WITH CLEAR ERROR (instead of cryptic TypeError)
 if not USERNAME or not PASSWORD or not HOST:
