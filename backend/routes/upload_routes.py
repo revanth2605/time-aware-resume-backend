@@ -9,10 +9,12 @@ upload_bp = Blueprint("upload", __name__)
 @upload_bp.route("/upload/certificate", methods=["POST"])
 @jwt_required()
 def upload_certificate():
-    identity = get_jwt_identity()
-    user_id = identity["user_id"]
+    user_id = get_jwt_identity()  # ✅ identity is already a string
 
-    data = request.json
+    data = request.get_json(silent=True)
+    if not data:
+        return {"error": "JSON body required"}, 400
+
     skill_name = data.get("skill_name", "Python")
 
     skill = get_or_create_skill(user_id, skill_name)
@@ -27,10 +29,12 @@ def upload_certificate():
 @upload_bp.route("/upload/code", methods=["POST"])
 @jwt_required()
 def upload_code():
-    identity = get_jwt_identity()
-    user_id = identity["user_id"]
+    user_id = get_jwt_identity()  # ✅ FIXED
 
-    data = request.json
+    data = request.get_json(silent=True)
+    if not data:
+        return {"error": "JSON body required"}, 400
+
     skill_name = data.get("skill_name", "Python")
 
     skill = get_or_create_skill(user_id, skill_name)
