@@ -41,8 +41,14 @@ def get_or_create_skill(user_id, skill_name, visibility="private"):
 
     if not skill:
         skill = create_skill(user_id, skill_name, visibility)
+    else:
+        # update visibility if user changed it
+        if "visibility" not in skill or skill["visibility"] != visibility:
+            skill["visibility"] = visibility
+            update_skill(skill)
 
     return skill
+
 
 
 # -----------------------------------
