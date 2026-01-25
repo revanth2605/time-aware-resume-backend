@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 
 from routes.dashboard_routes import dashboard_bp
@@ -9,7 +10,9 @@ from routes.search_routes import search_bp
 from routes.auth_routes import auth_bp
 from routes.register_routes import register_bp
 
+
 app = Flask(__name__)
+CORS(app)
 
 # 🔐 JWT Configuration
 import os
