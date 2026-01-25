@@ -71,8 +71,12 @@ def get_skills_by_user(user_id):
 def get_public_skills(user_id):
     return list(skills_collection.find({
         "user_id": user_id,
-        "visibility": "public"
+        "$or": [
+            {"visibility": "public"},
+            {"visibility": {"$exists": False}}
+        ]
     }))
+
 
 
 # -----------------------------------
