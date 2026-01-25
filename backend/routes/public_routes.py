@@ -4,6 +4,9 @@ from data.skill_data import get_public_skills
 
 public_bp = Blueprint("public", __name__)
 
+# -----------------------------------------
+# EXISTING ROUTE (KEPT AS-IS)
+# -----------------------------------------
 
 @public_bp.route("/users/public", methods=["POST"])
 def public_profile():
@@ -29,3 +32,28 @@ def public_profile():
     }
 
     return profile
+
+
+# -----------------------------------------
+# NEW ROUTE (FOR FRONTEND PUBLIC PROFILE)
+# -----------------------------------------
+
+@public_bp.route("/public/profile/<username>", methods=["GET"])
+def public_profile_get(username):
+
+    user = get_user_by_username(username)
+    if not user:
+        return {"error": "User not found"}, 404
+
+    public_skills = get_public_skills(user["user_id"])
+
+    return {
+        "username": user["username"],
+        "skills": [
+            {
+                "skill_name": s["skill_name"],
+                "current_score": round(s["current_score"], 2)
+            }
+            for s in public_skills
+        ]
+    }
