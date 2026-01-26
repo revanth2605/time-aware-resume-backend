@@ -24,10 +24,15 @@ def upload_certificate():
 
     skill_name = data.get("skill_name", "Python")
 
-    # NEW: visibility from frontend (public/private)
+    # Visibility: public / private
     visibility = data.get("visibility", "private")
 
+    # Optional future metadata (url, issuer, etc)
+    metadata = data.get("metadata", {})
+
     skill = get_or_create_skill(user_id, skill_name, visibility)
+
+    # Pass metadata later if needed (future AI usage)
     skill = process_certificate(skill)
 
     return {
@@ -52,10 +57,14 @@ def upload_code():
 
     skill_name = data.get("skill_name", "Python")
 
-    # NEW: visibility from frontend (public/private)
+    # Visibility: public / private
     visibility = data.get("visibility", "private")
 
+    # Optional future metadata (repo url, snippet, etc)
+    metadata = data.get("metadata", {})
+
     skill = get_or_create_skill(user_id, skill_name, visibility)
+
     skill = process_code(skill)
 
     return {

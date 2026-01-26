@@ -50,7 +50,6 @@ def get_or_create_skill(user_id, skill_name, visibility="private"):
     return skill
 
 
-
 # -----------------------------------
 # UPDATE SKILL DATA
 # -----------------------------------
@@ -84,9 +83,8 @@ def get_public_skills(user_id):
     }))
 
 
-
 # -----------------------------------
-# CHANGE VISIBILITY LATER (NEW)
+# CHANGE VISIBILITY LATER
 # -----------------------------------
 
 def update_skill_visibility(user_id, skill_name, visibility):
@@ -99,3 +97,14 @@ def update_skill_visibility(user_id, skill_name, visibility):
             "$set": {"visibility": visibility}
         }
     )
+
+
+# -----------------------------------
+# DELETE SKILL (NEW)
+# -----------------------------------
+
+def delete_skill(user_id, skill_name):
+    skills_collection.delete_one({
+        "user_id": user_id,
+        "skill_name": skill_name
+    })

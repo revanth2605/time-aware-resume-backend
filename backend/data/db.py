@@ -1,11 +1,17 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from pymongo import MongoClient
 from urllib.parse import quote_plus
 
 # ✅ CORRECT: Use the environment variable NAMES (keys), not values
-USERNAME = os.getenv("MONGO_USERNAME")
-PASSWORD = os.getenv("MONGO_PASSWORD")
-HOST = os.getenv("MONGO_HOST")
+USERNAME = os.getenv("MONGO_USERNAME").strip()
+PASSWORD = os.getenv("MONGO_PASSWORD").strip()
+HOST = os.getenv("MONGO_HOST").strip()
+
+
+
 
 # 🔴 HARD FAIL WITH CLEAR ERROR (instead of cryptic TypeError)
 if not USERNAME or not PASSWORD or not HOST:
@@ -28,7 +34,16 @@ client = MongoClient(MONGO_URI)
 
 db = client["time_aware_resume"]
 
+# --------------------
+# CORE COLLECTIONS
+# --------------------
 users_collection = db["users"]
 skills_collection = db["skills"]
 activities_collection = db["activities"]
 admin_flags_collection = db["admin_flags"]
+
+# --------------------
+# NEW EVIDENCE COLLECTIONS
+# --------------------
+code_evidence_collection = db["code_evidence"]
+certificate_evidence_collection = db["certificate_evidence"]
