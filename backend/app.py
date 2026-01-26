@@ -9,6 +9,7 @@ from routes.public_routes import public_bp
 from routes.search_routes import search_bp
 from routes.auth_routes import auth_bp
 from routes.register_routes import register_bp
+from routes.evidence_routes import evidence_bp
 
 
 app = Flask(__name__)
@@ -30,6 +31,7 @@ app.register_blueprint(public_bp)
 app.register_blueprint(search_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(register_bp)
+app.register_blueprint(evidence_bp)
 
 @app.route("/")
 def home():

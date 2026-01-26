@@ -4,35 +4,86 @@ import Navbar from "../components/Navbar";
 
 function Dashboard() {
 
-  const [data, setData] = useState(null);
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-
-    async function loadDashboard() {
-
+  // -----------------------------
+  // LOAD SKILLS
+  // -----------------------------
+  async function loadSkills() {
+    try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`${BASE_URL}/dashboard/get`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`
+      if (!token) {
+        setError("Not logged in");
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/dashboard/skills`,
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
         }
-      });
+      );
 
-      const result = await response.json();
-      setData(result);
+      const data = await response.json();
+
+      setSkills(data.skills || []);
     }
+    catch (err) {
+      console.error(err);
+      setError("Failed to load skills");
+    }
+    finally {
+      setLoading(false);
+    }
+  }
 
-    loadDashboard();
+  // -----------------------------
+  // CHANGE VISIBILITY
+  // -----------------------------
+  async function changeVisibility(skill_name, visibility) {
 
+    try {
+      const token = localStorage.getItem("token");
+
+      await fetch(
+        `${BASE_URL}/dashboard/visibility`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            skill_name,
+            visibility
+          })
+        }
+      );
+
+      // Reload updated skills
+      loadSkills();
+    }
+    catch (err) {
+      console.error(err);
+    }
+  }
+
+  // -----------------------------
+  // RUN ONCE
+  // -----------------------------
+  useEffect(() => {
+    loadSkills();
   }, []);
 
-  if (!data) return <p>Loading...</p>;
-
-  if (data.message) return <p>{data.message}</p>;
-
-  const skill = data.skill;
-
+  // -----------------------------
+  // UI
+  // -----------------------------
   return (
     <>
       <Navbar />
@@ -41,20 +92,52 @@ function Dashboard() {
 
         <h2>Dashboard</h2>
 
-        <div style={{
-          border: "1px solid gray",
-          padding: "15px",
-          width: "250px"
-        }}>
+        {loading && <p>Loading...</p>}
 
-          <h3>{skill.skill_name}</h3>
+        {error && <p>{error}</p>}
 
-          <p>Score: {skill.current_score}</p>
-          <p>Certificates: {skill.certificate_count}</p>
-          <p>Code Uploads: {skill.code_count}</p>
-          <p>Visibility: {skill.visibility}</p>
+        {!loading && skills.length === 0 && (
+          <p>No skills yet</p>
+        )}
 
-        </div>
+        {skills.map((skill) => (
+
+          <div
+            key={skill._id}
+            style={{
+              border: "1px solid gray",
+              padding: "12px",
+              marginBottom: "10px",
+              width: "280px"
+            }}
+          >
+
+            <h3>{skill.skill_name}</h3>
+
+            <p>Score: {Math.round(skill.current_score)}</p>
+            <p>Certificates: {skill.certificate_count}</p>
+            <p>Code Uploads: {skill.code_count}</p>
+
+            <p>
+              Visibility: <b>{skill.visibility}</b>
+            </p>
+
+            <button
+              onClick={() =>
+                changeVisibility(
+                  skill.skill_name,
+                  skill.visibility === "public"
+                    ? "private"
+                    : "public"
+                )
+              }
+            >
+              Make {skill.visibility === "public" ? "Private" : "Public"}
+            </button>
+
+          </div>
+
+        ))}
 
       </div>
     </>
