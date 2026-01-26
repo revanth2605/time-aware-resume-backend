@@ -112,7 +112,13 @@ function Dashboard() {
             }}
           >
 
-            <h3>{skill.skill_name}</h3>
+            <h3
+              style={{ cursor: "pointer", color: "blue" }}
+              onClick={() => window.location.href = `/skill/${skill.skill_name}`}
+            >
+              {skill.skill_name}
+            </h3>
+
 
             <p>Score: {Math.round(skill.current_score)}</p>
             <p>Certificates: {skill.certificate_count}</p>

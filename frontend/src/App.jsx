@@ -7,6 +7,7 @@ import UploadCertificate from "./pages/UploadCertificate";
 import PublicProfile from "./pages/PublicProfile";
 import SearchUser from "./pages/SearchUser";
 import Register from "./pages/Register";
+import SkillHistory from "./pages/SkillHistory";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -19,6 +20,14 @@ function App() {
         <Route path="/profile/:username" element={<PublicProfile />} />
         <Route path="/search" element={<SearchUser />} />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/skill/:skillName"
+          element={
+            <ProtectedRoute>
+              <SkillHistory />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/dashboard"
