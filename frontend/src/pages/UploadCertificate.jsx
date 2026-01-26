@@ -5,27 +5,32 @@ import Navbar from "../components/Navbar";
 function UploadCertificate() {
 
   const [skill, setSkill] = useState("Python");
-  const [visibility, setVisibility] = useState("private");   // NEW
+  const [visibility, setVisibility] = useState("private");
   const [message, setMessage] = useState("");
 
   async function handleUpload() {
+    try {
 
-    const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
 
-    const response = await fetch(`${BASE_URL}/upload/certificate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        skill_name: skill,
-        visibility: visibility     // NEW
-      })
-    });
+      const response = await fetch(`${BASE_URL}/upload/certificate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          skill_name: skill,
+          visibility: visibility
+        })
+      });
 
-    const data = await response.json();
-    setMessage(JSON.stringify(data));
+      const data = await response.json();
+      setMessage(JSON.stringify(data));
+
+    } catch {
+      setMessage("Server error");
+    }
   }
 
   return (

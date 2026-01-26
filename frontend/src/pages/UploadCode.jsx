@@ -5,27 +5,49 @@ import Navbar from "../components/Navbar";
 function UploadCode() {
 
   const [skill, setSkill] = useState("Python");
-  const [visibility, setVisibility] = useState("private");   // NEW
+  const [visibility, setVisibility] = useState("private");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function handleUpload() {
 
-    const token = localStorage.getItem("token");
+    try {
 
-    const response = await fetch(`${BASE_URL}/upload/code`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        skill_name: skill,
-        visibility: visibility     // NEW
-      })
-    });
+      setLoading(true);
+      setMessage("");
 
-    const data = await response.json();
-    setMessage(JSON.stringify(data));
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${BASE_URL}/upload/code`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          skill_name: skill,
+          visibility: visibility
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMessage("Upload failed");
+        return;
+      }
+
+      setMessage(
+        `✅ Code uploaded for ${data.skill.skill_name}
+Score: ${Math.round(data.skill.current_score)}
+Visibility: ${data.skill.visibility}`
+      );
+
+    } catch{
+      setMessage("Server error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -44,7 +66,6 @@ function UploadCode() {
         <br /><br />
 
         <b>Visibility:</b>
-
         <br />
 
         <label>
@@ -69,8 +90,8 @@ function UploadCode() {
 
         <br /><br />
 
-        <button onClick={handleUpload}>
-          Upload Code
+        <button onClick={handleUpload} disabled={loading}>
+          {loading ? "Uploading..." : "Upload Code"}
         </button>
 
         <p>{message}</p>
