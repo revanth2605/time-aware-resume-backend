@@ -6,27 +6,37 @@ import Navbar from "../components/Navbar";
 function Register() {
 
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");   // ✅ NEW
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   async function handleRegister() {
 
-    const response = await fetch(`${BASE_URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        username: username
-      })
-    });
+    try {
+      const response = await fetch(`${BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.success) {
-      navigate("/");
-    } else {
-      setMessage(data.message);
+      if (data.success) {
+        navigate("/");   // go to login
+      } 
+      else {
+        setMessage(data.message || "Registration failed");
+      }
+
+    }
+    catch (err) {
+      console.log(err);
+      setMessage("Server error");
     }
   }
 
@@ -42,6 +52,15 @@ function Register() {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         <br /><br />

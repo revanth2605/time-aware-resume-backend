@@ -1,10 +1,19 @@
 import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 from data.db import users_collection
 
+
+# ----------------------------------
+# CHECK USERNAME EXISTS
+# ----------------------------------
 
 def username_exists(username):
     return users_collection.find_one({"username": username}) is not None
 
+
+# ----------------------------------
+# GENERATE USER ID
+# ----------------------------------
 
 def generate_user_id():
     last_user = users_collection.find_one(
@@ -18,15 +27,23 @@ def generate_user_id():
     return f"USR-{last_number + 1:06d}"
 
 
-def create_user(username, role="user"):
+# ----------------------------------
+# CREATE USER (WITH PASSWORD)
+# ----------------------------------
+
+def create_user(username, password, role="user"):
+
     if username_exists(username):
         return None
 
     user_id = generate_user_id()
 
+    hashed_password = generate_password_hash(password)
+
     user = {
         "user_id": user_id,
         "username": username,
+        "password": hashed_password,   # ✅ STORED SECURELY
         "role": role,
         "created_at": datetime.datetime.now()
     }
@@ -35,11 +52,25 @@ def create_user(username, role="user"):
     return user
 
 
+# ----------------------------------
+# VERIFY PASSWORD
+# ----------------------------------
+
+def verify_password(user, password):
+    return check_password_hash(user["password"], password)
+
+
+# ----------------------------------
+# GETTERS
+# ----------------------------------
+
 def get_user_by_username(username):
     return users_collection.find_one({"username": username})
 
 
 def get_user_by_id(user_id):
     return users_collection.find_one({"user_id": user_id})
+
+
 def get_all_users():
     return list(users_collection.find())

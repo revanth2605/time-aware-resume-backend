@@ -1,16 +1,26 @@
-from data.users import create_user
+from data.users import create_user, get_user_by_username
 
-def register_user(username, role="user"):
-    user = create_user(username, role)
 
-    if user is None:
+def register_user(username, password, role="user"):
+
+    # Check duplicate username
+    existing = get_user_by_username(username)
+    if existing:
         return {
             "success": False,
             "message": "Username already exists"
         }
 
+    # Create user with password
+    user = create_user(username, password, role)
+
+    if not user:
+        return {
+            "success": False,
+            "message": "Registration failed"
+        }
+
     return {
         "success": True,
-        "user_id": user["user_id"],
-        "role": user["role"]
+        "message": "User registered successfully"
     }
