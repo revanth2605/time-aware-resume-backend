@@ -8,6 +8,8 @@ import PublicProfile from "./pages/PublicProfile";
 import SearchUser from "./pages/SearchUser";
 import Register from "./pages/Register";
 import SkillHistory from "./pages/SkillHistory";
+import CodeHistory from "./pages/CodeHistory";
+import CertificateHistory from "./pages/CertificateHistory";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -25,6 +27,23 @@ function App() {
           element={
             <ProtectedRoute>
               <SkillHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history/code/:skill"
+          element={
+            <ProtectedRoute>
+              <CodeHistory />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/history/certificate/:skill"
+          element={
+            <ProtectedRoute>
+              <CertificateHistory />
             </ProtectedRoute>
           }
         />

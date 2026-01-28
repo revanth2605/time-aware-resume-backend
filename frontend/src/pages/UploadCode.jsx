@@ -6,13 +6,17 @@ function UploadCode() {
 
   const [skill, setSkill] = useState("Python");
   const [visibility, setVisibility] = useState("private");
+
+  // ✅ METADATA
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [proofLink, setProofLink] = useState("");
+
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleUpload() {
-
     try {
-
       setLoading(true);
       setMessage("");
 
@@ -26,7 +30,14 @@ function UploadCode() {
         },
         body: JSON.stringify({
           skill_name: skill,
-          visibility: visibility
+          visibility,
+
+          // ✅ SEND METADATA
+          metadata: {
+            title,
+            description,
+            proof_link: proofLink
+          }
         })
       });
 
@@ -43,7 +54,13 @@ Score: ${Math.round(data.skill.current_score)}
 Visibility: ${data.skill.visibility}`
       );
 
-    } catch{
+      // Clear fields
+      setTitle("");
+      setDescription("");
+      setProofLink("");
+
+    } catch (err) {
+      console.error(err);
       setMessage("Server error");
     } finally {
       setLoading(false);
@@ -59,19 +76,42 @@ Visibility: ${data.skill.visibility}`
         <h2>Upload Code</h2>
 
         <input
+          placeholder="Skill name"
           value={skill}
           onChange={(e) => setSkill(e.target.value)}
         />
 
         <br /><br />
 
-        <b>Visibility:</b>
-        <br />
+        <input
+          placeholder="Title (e.g., Binary Search Implementation)"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <br /><br />
+
+        <textarea
+          placeholder="Short description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          placeholder="Proof link (GitHub / Drive / URL)"
+          value={proofLink}
+          onChange={(e) => setProofLink(e.target.value)}
+        />
+
+        <br /><br />
+
+        <b>Visibility:</b><br />
 
         <label>
           <input
             type="radio"
-            value="public"
             checked={visibility === "public"}
             onChange={() => setVisibility("public")}
           />
@@ -81,7 +121,6 @@ Visibility: ${data.skill.visibility}`
         <label style={{ marginLeft: "10px" }}>
           <input
             type="radio"
-            value="private"
             checked={visibility === "private"}
             onChange={() => setVisibility("private")}
           />

@@ -11,7 +11,11 @@ from data.code_evidence import add_code_evidence
 from data.certificate_evidence import add_certificate_evidence
 
 
-def process_certificate(skill):
+# ---------------------------------------------------
+# CERTIFICATE
+# ---------------------------------------------------
+
+def process_certificate(skill, metadata=None):
 
     # Safety for older records
     if "certificate_count" not in skill:
@@ -19,10 +23,11 @@ def process_certificate(skill):
 
     skill["certificate_count"] += 1
 
-    # 🎯 Save certificate evidence
+    # 🎯 Save certificate evidence WITH metadata
     add_certificate_evidence(
         user_id=skill["user_id"],
-        skill_name=skill["skill_name"]
+        skill_name=skill["skill_name"],
+        metadata=metadata
     )
 
     skill = add_certificate_score(skill)
@@ -32,7 +37,11 @@ def process_certificate(skill):
     return skill
 
 
-def process_code(skill):
+# ---------------------------------------------------
+# CODE
+# ---------------------------------------------------
+
+def process_code(skill, metadata=None):
 
     # Safety for older records
     if "code_count" not in skill:
@@ -40,10 +49,11 @@ def process_code(skill):
 
     skill["code_count"] += 1
 
-    # 🎯 Save code evidence
+    # 🎯 Save code evidence WITH metadata
     add_code_evidence(
         user_id=skill["user_id"],
-        skill_name=skill["skill_name"]
+        skill_name=skill["skill_name"],
+        metadata=metadata
     )
 
     skill = add_code_score(skill)

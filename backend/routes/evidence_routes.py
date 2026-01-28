@@ -5,6 +5,10 @@ from bson import ObjectId
 from data.code_evidence import get_code_evidence_by_skill
 from data.certificate_evidence import get_certificate_evidence_by_skill
 from data.db import code_evidence_collection, certificate_evidence_collection
+
+from data.skill_data import get_skill, update_skill
+from services.skill_scoring import finalize_score
+
 from utils.serializers import serialize_mongo_doc
 
 evidence_bp = Blueprint("evidence", __name__)
@@ -53,10 +57,24 @@ def delete_code_evidence(evidence_id):
 
     user_id = get_jwt_identity()
 
-    code_evidence_collection.delete_one({
+    evidence = code_evidence_collection.find_one({
         "_id": ObjectId(evidence_id),
         "user_id": user_id
     })
+
+    if not evidence:
+        return {"error": "Record not found"}, 404
+
+    # Delete evidence
+    code_evidence_collection.delete_one({"_id": ObjectId(evidence_id)})
+
+    # Reduce skill count
+    skill = get_skill(user_id, evidence["skill_name"])
+
+    if skill and skill.get("code_count", 0) > 0:
+        skill["code_count"] -= 1
+        skill = finalize_score(skill)
+        update_skill(skill)
 
     return {"message": "Code evidence deleted"}
 
@@ -71,9 +89,23 @@ def delete_certificate_evidence(evidence_id):
 
     user_id = get_jwt_identity()
 
-    certificate_evidence_collection.delete_one({
+    evidence = certificate_evidence_collection.find_one({
         "_id": ObjectId(evidence_id),
         "user_id": user_id
     })
+
+    if not evidence:
+        return {"error": "Record not found"}, 404
+
+    # Delete evidence
+    certificate_evidence_collection.delete_one({"_id": ObjectId(evidence_id)})
+
+    # Reduce skill count
+    skill = get_skill(user_id, evidence["skill_name"])
+
+    if skill and skill.get("certificate_count", 0) > 0:
+        skill["certificate_count"] -= 1
+        skill = finalize_score(skill)
+        update_skill(skill)
 
     return {"message": "Certificate evidence deleted"}

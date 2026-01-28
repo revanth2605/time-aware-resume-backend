@@ -31,7 +31,6 @@ function Dashboard() {
       );
 
       const data = await response.json();
-
       setSkills(data.skills || []);
     }
     catch (err) {
@@ -47,7 +46,6 @@ function Dashboard() {
   // CHANGE VISIBILITY
   // -----------------------------
   async function changeVisibility(skill_name, visibility) {
-
     try {
       const token = localStorage.getItem("token");
 
@@ -66,7 +64,6 @@ function Dashboard() {
         }
       );
 
-      // Reload updated skills
       loadSkills();
     }
     catch (err) {
@@ -93,7 +90,6 @@ function Dashboard() {
         <h2>Dashboard</h2>
 
         {loading && <p>Loading...</p>}
-
         {error && <p>{error}</p>}
 
         {!loading && skills.length === 0 && (
@@ -106,24 +102,21 @@ function Dashboard() {
             key={skill._id}
             style={{
               border: "1px solid gray",
-              padding: "12px",
-              marginBottom: "10px",
-              width: "280px"
+              padding: "14px",
+              marginBottom: "12px",
+              width: "320px",
+              borderRadius: "6px"
             }}
           >
 
-            <h3
-              style={{ cursor: "pointer", color: "blue" }}
-              onClick={() => window.location.href = `/skill/${skill.skill_name}`}
-            >
-              {skill.skill_name}
-            </h3>
-
+            {/* Skill Name */}
+            <h3>{skill.skill_name}</h3>
 
             <p>Score: {Math.round(skill.current_score)}</p>
             <p>Certificates: {skill.certificate_count}</p>
             <p>Code Uploads: {skill.code_count}</p>
 
+            {/* Visibility */}
             <p>
               Visibility: <b>{skill.visibility}</b>
             </p>
@@ -139,6 +132,29 @@ function Dashboard() {
               }
             >
               Make {skill.visibility === "public" ? "Private" : "Public"}
+            </button>
+
+            <br /><br />
+
+            {/* History Buttons */}
+            <button
+              onClick={() =>
+                window.location.href =
+                `/history/code/${skill.skill_name}`
+              }
+            >
+              View Code History
+            </button>
+
+            <br /><br />
+
+            <button
+              onClick={() =>
+                window.location.href =
+                `/history/certificate/${skill.skill_name}`
+              }
+            >
+              View Certificate History
             </button>
 
           </div>

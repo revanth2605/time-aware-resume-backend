@@ -27,13 +27,13 @@ def upload_certificate():
     # Visibility: public / private
     visibility = data.get("visibility", "private")
 
-    # Optional future metadata (url, issuer, etc)
+    # ✅ METADATA
     metadata = data.get("metadata", {})
 
     skill = get_or_create_skill(user_id, skill_name, visibility)
 
-    # Pass metadata later if needed (future AI usage)
-    skill = process_certificate(skill)
+    # ✅ PASS METADATA
+    skill = process_certificate(skill, metadata)
 
     return {
         "message": "Certificate uploaded",
@@ -60,12 +60,13 @@ def upload_code():
     # Visibility: public / private
     visibility = data.get("visibility", "private")
 
-    # Optional future metadata (repo url, snippet, etc)
+    # ✅ METADATA
     metadata = data.get("metadata", {})
 
     skill = get_or_create_skill(user_id, skill_name, visibility)
 
-    skill = process_code(skill)
+    # ✅ PASS METADATA
+    skill = process_code(skill, metadata)
 
     return {
         "message": "Code uploaded",

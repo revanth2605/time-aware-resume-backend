@@ -6,6 +6,12 @@ function UploadCertificate() {
 
   const [skill, setSkill] = useState("Python");
   const [visibility, setVisibility] = useState("private");
+
+  // ✅ METADATA FIELDS (NEW)
+  const [title, setTitle] = useState("");
+  const [issuer, setIssuer] = useState("");
+  const [proofLink, setProofLink] = useState("");
+
   const [message, setMessage] = useState("");
 
   async function handleUpload() {
@@ -21,12 +27,34 @@ function UploadCertificate() {
         },
         body: JSON.stringify({
           skill_name: skill,
-          visibility: visibility
+          visibility: visibility,
+
+          // ✅ SEND METADATA
+          metadata: {
+            title: title,
+            issuer: issuer,
+            proof_link: proofLink
+          }
         })
       });
 
       const data = await response.json();
-      setMessage(JSON.stringify(data));
+
+      if (!response.ok) {
+        setMessage("Upload failed");
+        return;
+      }
+
+      setMessage(
+        `✅ Certificate uploaded for ${data.skill.skill_name}
+Score: ${Math.round(data.skill.current_score)}
+Visibility: ${data.skill.visibility}`
+      );
+
+      // ✅ CLEAR INPUTS
+      setTitle("");
+      setIssuer("");
+      setProofLink("");
 
     } catch {
       setMessage("Server error");
@@ -42,8 +70,35 @@ function UploadCertificate() {
         <h2>Upload Certificate</h2>
 
         <input
+          placeholder="Skill name"
           value={skill}
           onChange={(e) => setSkill(e.target.value)}
+        />
+
+        <br /><br />
+
+        {/* ✅ METADATA INPUTS */}
+
+        <input
+          placeholder="Certificate Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          placeholder="Issuer (Coursera / Udemy / Google)"
+          value={issuer}
+          onChange={(e) => setIssuer(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          placeholder="Verification / Proof Link"
+          value={proofLink}
+          onChange={(e) => setProofLink(e.target.value)}
         />
 
         <br /><br />
